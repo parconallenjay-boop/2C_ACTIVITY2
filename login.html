@@ -114,7 +114,7 @@
 			event.currentTarget.textContent = showing ? 'HIDE' : 'SHOW';
 			event.currentTarget.setAttribute('aria-label', showing ? 'Hide password' : 'Show password');
 		});
-		form.addEventListener('submit', (event) => { event.preventDefault(); message.textContent = `Access request queued for ${document.querySelector('#email').value.trim()}.`; });
+		form.addEventListener('submit', (event) => { event.preventDefault(); window.location.href = 'dashboard.html'; });
 		document.querySelector('#forgot').addEventListener('click', (event) => { event.preventDefault(); message.textContent = 'Recovery instructions are ready to send.'; });
 		document.querySelector('#sso').addEventListener('click', () => { message.textContent = 'SSO handoff initialized.'; });
 	</script>
