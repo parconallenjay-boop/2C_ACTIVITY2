@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>NEXUS // Secure Login</title>
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+		:root {
+			--bg: #071113;
+			--panel: rgba(13, 26, 30, .86);
+			--text: #eaf5f2;
+			--muted: #91a5a7;
+			--line: rgba(171, 219, 216, .16);
+			--mint: #69f5d7;
+			--lime: #d1f46a;
+		}
+
+		* { box-sizing: border-box; }
+		body {
+			min-height: 100vh;
+			margin: 0;
+			color: var(--text);
+			background: radial-gradient(circle at 12% 18%, rgba(105, 245, 215, .1), transparent 25rem), radial-gradient(circle at 90% 86%, rgba(209, 244, 106, .08), transparent 28rem), var(--bg);
+			font-family: 'Space Grotesk', sans-serif;
+			overflow-x: hidden;
+		}
+		body::before {
+			position: fixed;
+			inset: 0;
+			z-index: -1;
+			background-image: linear-gradient(rgba(128, 192, 190, .045) 1px, transparent 1px), linear-gradient(90deg, rgba(128, 192, 190, .045) 1px, transparent 1px);
+			background-size: 54px 54px;
+			content: '';
+			mask-image: linear-gradient(#000, transparent 90%);
+		}
+		.shell { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(44px, 9vw, 135px); align-items: center; width: min(1190px, calc(100% - 64px)); min-height: 100vh; margin: auto; padding: 34px 0; }
+		.brand { display: inline-flex; align-items: center; gap: 11px; color: var(--text); font-size: .86rem; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; }
+		.brand-mark { display: grid; width: 31px; height: 31px; border: 1px solid var(--mint); color: var(--mint); place-items: center; font-family: 'DM Mono', monospace; transform: rotate(45deg); }
+		.brand-mark span { transform: rotate(-45deg); }
+		.eyebrow { margin: clamp(72px, 11vh, 130px) 0 21px; color: var(--mint); font: .7rem 'DM Mono', monospace; letter-spacing: .12em; text-transform: uppercase; }
+		h1 { max-width: 620px; margin: 0; font-size: clamp(3.8rem, 7vw, 6.7rem); line-height: .9; letter-spacing: -.06em; }
+		h1 em { color: var(--lime); font-style: normal; }
+		.tagline { max-width: 385px; margin: 28px 0 0; color: var(--muted); font-size: 1rem; line-height: 1.65; }
+		.status { display: flex; max-width: 410px; gap: 28px; margin-top: 62px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font: .65rem/1.8 'DM Mono', monospace; text-transform: uppercase; }
+		.status strong { color: var(--text); font-weight: 400; }
+		.online { color: var(--lime); }
+		.panel { position: relative; width: 100%; max-width: 505px; margin-left: auto; padding: clamp(28px, 5vw, 53px); border: 1px solid var(--line); background: var(--panel); box-shadow: 0 28px 90px rgba(0, 0, 0, .3); backdrop-filter: blur(18px); animation: enter .7s .1s ease both; }
+		.panel::before, .panel::after { position: absolute; width: 12px; height: 12px; content: ''; }
+		.panel::before { top: -1px; left: -1px; border-top: 2px solid var(--mint); border-left: 2px solid var(--mint); }
+		.panel::after { right: -1px; bottom: -1px; border-right: 2px solid var(--lime); border-bottom: 2px solid var(--lime); }
+		.meta { display: flex; justify-content: space-between; margin-bottom: 52px; color: var(--muted); font: .65rem 'DM Mono', monospace; letter-spacing: .08em; text-transform: uppercase; }
+		.meta span:last-child { color: var(--mint); }
+		h2 { margin: 0 0 10px; font-size: 1.9rem; letter-spacing: -.04em; }
+		.sub { margin: 0 0 33px; color: var(--muted); font-size: .9rem; }
+		.field { margin-bottom: 20px; }
+		label { display: block; margin-bottom: 9px; color: #b6c6c5; font: .68rem 'DM Mono', monospace; letter-spacing: .08em; text-transform: uppercase; }
+		.input-wrap { position: relative; }
+		input[type='email'], input[type='password'], input[type='text'] { width: 100%; padding: 16px 17px; border: 1px solid var(--line); outline: 0; color: var(--text); background: rgba(1, 9, 11, .66); font: inherit; transition: border-color .18s, box-shadow .18s; }
+		input:focus { border-color: var(--mint); box-shadow: 0 0 0 3px rgba(105, 245, 215, .1); }
+		input::placeholder { color: #607174; }
+		#password { padding-right: 72px; }
+		.toggle { position: absolute; top: 50%; right: 13px; padding: 5px; border: 0; color: var(--mint); background: transparent; font: .63rem 'DM Mono', monospace; cursor: pointer; transform: translateY(-50%); }
+		.options { display: flex; justify-content: space-between; align-items: center; margin: 8px 0 29px; font-size: .77rem; }
+		.remember { display: flex; align-items: center; gap: 8px; color: var(--muted); cursor: pointer; }
+		.remember input { width: 14px; height: 14px; accent-color: var(--mint); }
+		a { color: var(--mint); text-decoration: none; }
+		.primary, .sso { width: 100%; cursor: pointer; }
+		.primary { display: flex; justify-content: space-between; align-items: center; padding: 17px 18px; border: 0; color: #071113; background: var(--mint); font: 600 .82rem 'DM Mono', monospace; letter-spacing: .05em; transition: background .18s, transform .18s; }
+		.primary:hover { background: var(--lime); transform: translateY(-2px); }
+		.arrow { font-size: 1.2rem; }
+		.message { min-height: 20px; margin: 17px 0 0; color: var(--lime); font: .65rem 'DM Mono', monospace; }
+		.divider { display: flex; align-items: center; gap: 12px; margin: 27px 0; color: #607174; font: .62rem 'DM Mono', monospace; text-transform: uppercase; }
+		.divider::before, .divider::after { height: 1px; flex: 1; background: var(--line); content: ''; }
+		.sso { padding: 14px; border: 1px solid var(--line); color: var(--text); background: transparent; font: .77rem 'Space Grotesk', sans-serif; }
+		.sso:hover { border-color: var(--mint); }
+		@keyframes enter { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+		@media (max-width: 780px) { .shell { display: block; width: min(100% - 36px, 520px); padding: 26px 0 42px; } .eyebrow { margin-top: 70px; } h1 { font-size: clamp(3.5rem, 17vw, 5rem); } .status { margin: 42px 0 52px; } .panel { margin: 0; } }
+		@media (max-width: 420px) { .panel { padding: 26px 21px; } .options { align-items: flex-start; flex-direction: column; gap: 14px; } }
+	</style>
+</head>
+<body>
+	<main class="shell">
+		<section aria-labelledby="headline">
+			<div class="brand"><span class="brand-mark"><span>N</span></span> Nexus Labs</div>
+			<p class="eyebrow">// private network / node 07</p>
+			<h1 id="headline">Make<br><em>the future.</em></h1>
+			<p class="tagline">A focused workspace for teams turning ambitious ideas into intelligent, resilient products.</p>
+			<div class="status" aria-label="System status"><div><span class="online">●</span> all systems<br><strong>operational</strong></div><div>latency<br><strong>18 ms</strong></div><div>encryption<br><strong>active</strong></div></div>
+		</section>
+		<section class="panel" aria-labelledby="login-title">
+			<div class="meta"><span>Access portal</span><span>v.4.07.2</span></div>
+			<h2 id="login-title">Welcome back.</h2>
+			<p class="sub">Enter your credentials to continue to Nexus.</p>
+			<form id="login-form">
+				<div class="field"><label for="email">Identity / email</label><input id="email" name="email" type="email" autocomplete="email" placeholder="you@company.com" required></div>
+				<div class="field"><label for="password">Access key</label><div class="input-wrap"><input id="password" name="password" type="password" autocomplete="current-password" placeholder="Enter your access key" minlength="6" required><button class="toggle" type="button" aria-label="Show password">SHOW</button></div></div>
+				<div class="options"><label class="remember"><input type="checkbox" name="remember"> Remember this device</label><a href="#" id="forgot">Forgot access key?</a></div>
+				<button class="primary" type="submit"><span>AUTHENTICATE</span><span class="arrow">-&gt;</span></button>
+				<p class="message" id="message" role="status" aria-live="polite"></p>
+			</form>
+			<div class="divider">or continue with</div>
+			<button class="sso" type="button" id="sso">Continue with SSO</button>
+		</section>
+	</main>
+	<script>
+		const form = document.querySelector('#login-form');
+		const password = document.querySelector('#password');
+		const message = document.querySelector('#message');
+		document.querySelector('.toggle').addEventListener('click', (event) => {
+			const showing = password.type === 'password';
+			password.type = showing ? 'text' : 'password';
+			event.currentTarget.textContent = showing ? 'HIDE' : 'SHOW';
+			event.currentTarget.setAttribute('aria-label', showing ? 'Hide password' : 'Show password');
+		});
+		form.addEventListener('submit', (event) => { event.preventDefault(); message.textContent = `Access request queued for ${document.querySelector('#email').value.trim()}.`; });
+		document.querySelector('#forgot').addEventListener('click', (event) => { event.preventDefault(); message.textContent = 'Recovery instructions are ready to send.'; });
+		document.querySelector('#sso').addEventListener('click', () => { message.textContent = 'SSO handoff initialized.'; });
+	</script>
+</body>
+</html>
